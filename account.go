@@ -34,11 +34,11 @@ type RevokeAccessTokenRequest struct {
 }
 
 const (
-	AccountShortName  AccountInfoFields = "short_name"
-	AccountAuthorName AccountInfoFields = "author_name"
-	AccountAuthorURL  AccountInfoFields = "author_url"
-	AccountAuthURL    AccountInfoFields = "auth_url"
-	AccountPageCount  AccountInfoFields = "page_count"
+	AccountFieldShortName  AccountInfoFields = "short_name"
+	AccountFieldAuthorName AccountInfoFields = "author_name"
+	AccountFieldAuthorURL  AccountInfoFields = "author_url"
+	AccountFieldAuthURL    AccountInfoFields = "auth_url"
+	AccountFieldPageCount  AccountInfoFields = "page_count"
 )
 
 func (c *client) CreateAccount(p *CreateAccountRequest) (result *Account, err error) {
