@@ -1,0 +1,3 @@
+package telegraph
+
+// func Add

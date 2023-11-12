@@ -73,15 +73,6 @@ func (c *client) request(path string, payload interface{}) (response *Response, 
 	return
 }
 
-// Parameters with token
-func (c *client) withToken(v interface{}) (result interface{}) {
-	result = &struct {
-		AccessToken string `json:"access_token"`
-		Parameters  interface{}
-	}{c.token, v}
-	return
-}
-
 func jsonMarshal(value any) ([]byte, error) {
 	return json.Marshal(value)
 }

@@ -11,25 +11,25 @@ type Account struct {
 
 type AccountInfoFields string
 
-type CreateAccountParameters struct {
+type CreateAccountRequest struct {
 	ShortName  string `json:"short_name"`
 	AuthorName string `json:"author_name,omitempty"`
 	AuthorURL  string `json:"author_url,omitempty"`
 }
 
-type EditAccountInfoParameters struct {
+type EditAccountInfoRequest struct {
 	AccessToken string `json:"access_token"`
 	ShortName   string `json:"short_name,omitempty"`
 	AuthorName  string `json:"author_name,omitempty"`
 	AuthorURL   string `json:"author_url,omitempty"`
 }
 
-type GetAccountInfoParameters struct {
+type GetAccountInfoRequest struct {
 	AccessToken string              `json:"access_token"`
 	Fields      []AccountInfoFields `json:"fields,omitempty"`
 }
 
-type RevokeAccessTokenParameters struct {
+type RevokeAccessTokenRequest struct {
 	AccessToken string `json:"access_token"`
 }
 
@@ -41,10 +41,8 @@ const (
 	AccountPageCount  AccountInfoFields = "page_count"
 )
 
-func (c *client) CreateAccount(p *CreateAccountParameters) (result *Account, err error) {
-	var (
-		response *Response
-	)
+func (c *client) CreateAccount(p *CreateAccountRequest) (result *Account, err error) {
+	var response *Response
 
 	response, err = c.request("/createAccount", p)
 	if err != nil {
@@ -60,19 +58,17 @@ func (c *client) CreateAccount(p *CreateAccountParameters) (result *Account, err
 	return
 }
 
-func (c *client) EditAccountInfo(p *EditAccountInfoParameters) (result *Account, err error) {
-	var (
-		parameters interface{}
-		response   *Response
-	)
+func (c *client) EditAccountInfo(p *EditAccountInfoRequest) (result *Account, err error) {
+	var response *Response
 
 	if len(p.AccessToken) == 0 {
-		parameters = c.withToken(p)
-	} else {
-		parameters = p
+		p.AccessToken = c.token
+		defer func() {
+			p.AccessToken = ""
+		}()
 	}
 
-	response, err = c.request("/editAccountInfo", parameters)
+	response, err = c.request("/editAccountInfo", p)
 	if err != nil {
 		return
 	}
@@ -86,19 +82,17 @@ func (c *client) EditAccountInfo(p *EditAccountInfoParameters) (result *Account,
 	return
 }
 
-func (c *client) GetAccountInfo(p *GetAccountInfoParameters) (result *Account, err error) {
-	var (
-		parameters interface{}
-		response   *Response
-	)
+func (c *client) GetAccountInfo(p *GetAccountInfoRequest) (result *Account, err error) {
+	var response *Response
 
 	if len(p.AccessToken) == 0 {
-		parameters = c.withToken(p)
-	} else {
-		parameters = p
+		p.AccessToken = c.token
+		defer func() {
+			p.AccessToken = ""
+		}()
 	}
 
-	response, err = c.request("/getAccountInfo", parameters)
+	response, err = c.request("/getAccountInfo", p)
 	if err != nil {
 		return
 	}
@@ -112,19 +106,17 @@ func (c *client) GetAccountInfo(p *GetAccountInfoParameters) (result *Account, e
 	return
 }
 
-func (c *client) RevokeAccessToken(p *RevokeAccessTokenParameters) (result *Account, err error) {
-	var (
-		parameters interface{}
-		response   *Response
-	)
+func (c *client) RevokeAccessToken(p *RevokeAccessTokenRequest) (result *Account, err error) {
+	var response *Response
 
 	if len(p.AccessToken) == 0 {
-		parameters = c.withToken(p)
-	} else {
-		parameters = p
+		p.AccessToken = c.token
+		defer func() {
+			p.AccessToken = ""
+		}()
 	}
 
-	response, err = c.request("/revokeAccessToken", parameters)
+	response, err = c.request("/revokeAccessToken", p)
 	if err != nil {
 		return
 	}

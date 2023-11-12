@@ -30,37 +30,12 @@ type PageViews struct {
 	Views int `json:"views"`
 }
 
-type CreatePageParameters struct {
-	AccessToken   string `json:"access_token"`
-	Title         string `json:"title"`
-	AuthorName    string `json:"author_name,omitempty"`
-	AuthorURL     string `json:"author_url,omitempty"`
-	Content       []Node `json:"content"`
-	ReturnContent bool   `json:"return_content,omitempty"`
-}
-
-type EditPageParameters struct {
-	AccessToken   string `json:"access_token"`
-	Path          string `json:"path"`
-	Title         string `json:"title"`
-	Content       []Node `json:"content"`
-	AuthorName    string `json:"author_name,omitempty"`
-	AuthorURL     string `json:"author_url,omitempty"`
-	ReturnContent bool   `json:"return_content,omitempty"`
-}
-
-type GetPageParameters struct {
+type GetPageRequest struct {
 	Path          string `json:"path"`
 	ReturnContent bool   `json:"return_content,omitempty"`
 }
 
-type GetPageListParameters struct {
-	AccessToken string `json:"access_token"`
-	Offset      int    `json:"offset,omitempty"`
-	Limit       int    `json:"limit,omitempty"`
-}
-
-type GetViewsParameters struct {
+type GetViewsRequest struct {
 	Path  string `json:"path"`
 	Year  int    `json:"year,omitempty"`
 	Month int    `json:"month,omitempty"`
@@ -68,10 +43,33 @@ type GetViewsParameters struct {
 	Hour  int    `json:"hour,omitempty"`
 }
 
-func (c *client) GetPage(p *GetPageParameters) (result *Page, err error) {
-	var (
-		response *Response
-	)
+type CreatePageRequest struct {
+	AccessToken   string `json:"access_token"`
+	Title         string `json:"title"`
+	AuthorName    string `json:"author_name,omitempty"`
+	AuthorURL     string `json:"author_url,omitempty"`
+	Content       []Node `json:"content"`
+	ReturnContent bool   `json:"return_content,omitempty"`
+}
+
+type EditPageRequest struct {
+	AccessToken   string `json:"access_token"`
+	Path          string `json:"path"`
+	Title         string `json:"title"`
+	Content       []Node `json:"content"`
+	AuthorName    string `json:"author_name,omitempty"`
+	AuthorURL     string `json:"author_url,omitempty"`
+	ReturnContent bool   `json:"return_content,omitempty"`
+}
+
+type GetPageListRequest struct {
+	AccessToken string `json:"access_token"`
+	Offset      int    `json:"offset,omitempty"`
+	Limit       int    `json:"limit,omitempty"`
+}
+
+func (c *client) GetPage(p *GetPageRequest) (result *Page, err error) {
+	var response *Response
 
 	response, err = c.request("/getPage", p)
 	if err != nil {
@@ -87,10 +85,8 @@ func (c *client) GetPage(p *GetPageParameters) (result *Page, err error) {
 	return
 }
 
-func (c *client) GetViews(p *GetViewsParameters) (result *PageViews, err error) {
-	var (
-		response *Response
-	)
+func (c *client) GetViews(p *GetViewsRequest) (result *PageViews, err error) {
+	var response *Response
 
 	response, err = c.request("/getViews", p)
 	if err != nil {
@@ -106,19 +102,17 @@ func (c *client) GetViews(p *GetViewsParameters) (result *PageViews, err error) 
 	return
 }
 
-func (c *client) CreatePage(p *CreatePageParameters) (result *Page, err error) {
-	var (
-		parameters interface{}
-		response   *Response
-	)
+func (c *client) CreatePage(p *CreatePageRequest) (result *Page, err error) {
+	var response *Response
 
 	if len(p.AccessToken) == 0 {
-		parameters = c.withToken(p)
-	} else {
-		parameters = p
+		p.AccessToken = c.token
+		defer func() {
+			p.AccessToken = ""
+		}()
 	}
 
-	response, err = c.request("/createPage", parameters)
+	response, err = c.request("/createPage", p)
 	if err != nil {
 		return
 	}
@@ -132,19 +126,17 @@ func (c *client) CreatePage(p *CreatePageParameters) (result *Page, err error) {
 	return
 }
 
-func (c *client) EditPage(p *EditPageParameters) (result *Page, err error) {
-	var (
-		parameters interface{}
-		response   *Response
-	)
+func (c *client) EditPage(p *EditPageRequest) (result *Page, err error) {
+	var response *Response
 
 	if len(p.AccessToken) == 0 {
-		parameters = c.withToken(p)
-	} else {
-		parameters = p
+		p.AccessToken = c.token
+		defer func() {
+			p.AccessToken = ""
+		}()
 	}
 
-	response, err = c.request("/editPage", parameters)
+	response, err = c.request("/editPage", p)
 	if err != nil {
 		return
 	}
@@ -158,19 +150,17 @@ func (c *client) EditPage(p *EditPageParameters) (result *Page, err error) {
 	return
 }
 
-func (c *client) GetPageList(p *GetPageListParameters) (result *PageList, err error) {
-	var (
-		parameters interface{}
-		response   *Response
-	)
+func (c *client) GetPageList(p *GetPageListRequest) (result *PageList, err error) {
+	var response *Response
 
 	if len(p.AccessToken) == 0 {
-		parameters = c.withToken(p)
-	} else {
-		parameters = p
+		p.AccessToken = c.token
+		defer func() {
+			p.AccessToken = ""
+		}()
 	}
 
-	response, err = c.request("/getPageList", parameters)
+	response, err = c.request("/getPageList", p)
 	if err != nil {
 		return
 	}
