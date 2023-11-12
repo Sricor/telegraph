@@ -47,7 +47,7 @@ func (c *client) request(path string, payload interface{}) (response *Response, 
 	if err != nil {
 		return
 	}
-
+	print(string(body))
 	resp, err = http.Post(c.api+path, "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		return

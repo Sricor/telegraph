@@ -3,6 +3,7 @@ package telegraph
 type Node interface{}
 
 type NodeElement struct {
+	// Name of the DOM element. Available tags: a, aside, b, blockquote, br, code, em, figcaption, figure, h3, h4, hr, i, iframe, img, li, ol, p, pre, s, strong, u, ul, video.
 	Tag      string            `json:"tag"`
 	Attrs    map[string]string `json:"attrs,omitempty"`
 	Children []Node            `json:"children,omitempty"`
@@ -172,4 +173,31 @@ func (c *client) GetPageList(p *GetPageListRequest) (result *PageList, err error
 	}
 
 	return
+}
+
+func (n *NodeElement) AddChildren(t *NodeElement) *NodeElement {
+	n.Children = append(n.Children, t)
+	return t
+}
+
+func (n *NodeElement) AddText(text string) *NodeElement {
+	return n.AddChildren(&NodeElement{
+		Tag:      "p",
+		Children: []Node{text},
+	})
+}
+
+func (n *NodeElement) AddImage(src string, description string) *NodeElement {
+	image := NodeElement{
+		Tag: "figure",
+	}
+	image.AddChildren(&NodeElement{
+		Tag:   "img",
+		Attrs: map[string]string{"src": src},
+	})
+	image.AddChildren(&NodeElement{
+		Tag:      "figcaption",
+		Children: []Node{description},
+	})
+	return n.AddChildren(&image)
 }
